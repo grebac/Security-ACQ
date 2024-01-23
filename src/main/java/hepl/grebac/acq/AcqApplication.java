@@ -39,9 +39,10 @@ public class AcqApplication {
 				BufferedReader input = GetBufferedReader(client);
 				BufferedWriter output = GetBufferedWriter(client);
 
-				System.out.println("The user sent a token: " + input.readLine());
+				var token = input.readLine();
+				System.out.println("The user sent a token: " + token);
 
-				if(requestToACS())
+				if(requestToACS(token))
 					output.write("ACK\n");
 				else
 					output.write("NACK\n");
@@ -55,14 +56,14 @@ public class AcqApplication {
 		}
 	}
 
-	private static boolean requestToACS() throws IOException {
+	private static boolean requestToACS(String token) throws IOException {
 		SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 		SSLSocket sslSocketForACS = (SSLSocket) sslsocketfactory.createSocket("localhost", 3333);
 
 		var writer = GetBufferedWriter(sslSocketForACS);
 		var reader = GetBufferedReader(sslSocketForACS);
 
-		writer.write("This is a Token\n");
+		writer.write(token + "\n");
 		writer.flush();
 
 		var answer = reader.readLine();
